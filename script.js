@@ -1,65 +1,99 @@
 const gameContainer = document.getElementById('game');
+const resultContainer = document.getElementById('result');
+const resultHolder = document.getElementById('resultHolder');
+const buttonHolder = document.getElementById('buttonHolder');
+
+let pairCards = 0;
+let COLORS = [];
+let startDashBord = document.querySelector('#startBtn');
 let cardOne = null;
 let cardTwo = null;
 let Cardslocked = false;
+let startBtnLocked = false;
 let matched = 0;
+let score = 0;
 
-const COLORS = [
-  'red',
-  'blue',
-  'green',
-  'orange',
-  'purple',
-  'red',
-  'blue',
-  'green',
-  'orange',
-  'purple',
-];
+// set the current best score
+let curBest = document.getElementById('highestScore');
+console.log(curBest);
+if (localStorage.getItem('bestScore')) {
+  curBest.innerText = `Highest Score: ${localStorage.getItem('bestScore')}`;
+} else {
+  curBest.innerText = `Highest Score: `;
+}
+// reset score to 0
+let curScore = document.getElementById('curScore');
+curScore.innerText = `Score: ${score}`;
 
-// here is a helper function to shuffle an array
-// it returns the same array with values shuffled
-// it is based on an algorithm called Fisher Yates if you want ot research more
-function shuffle(array) {
-  let counter = array.length;
+// add Event Listener to startBtn
+startDashBord.addEventListener('click', function (e) {
+  // ensure the start button until the round is over
+  if (startBtnLocked) {
+    return;
+  }
+  startBtnLocked = true;
 
-  // While there are elements in the array
-  while (counter > 0) {
-    // Pick a random index
-    let index = Math.floor(Math.random() * counter);
+  // get number of cards user would like to play
+  pairCards = document.querySelector('input[type=text]').value;
 
-    // Decrease counter by 1
-    counter--;
-
-    // And swap the last element with it
-    let temp = array[counter];
-    array[counter] = array[index];
-    array[index] = temp;
+  // set colors for each card randomly
+  for (let i = 0; i < pairCards; i++) {
+    let r = Math.floor(Math.random() * 255);
+    let g = Math.floor(Math.random() * 255);
+    let b = Math.floor(Math.random() * 255);
+    let curColor = `rgb(${r},${g},${b})`;
+    COLORS.push(curColor);
+    COLORS.push(curColor);
   }
 
-  return array;
-}
+  // here is a helper function to shuffle an array
+  // it returns the same array with values shuffled
+  // it is based on an algorithm called Fisher Yates if you want ot research more
+  function shuffle(array) {
+    let counter = array.length;
 
-let shuffledColors = shuffle(COLORS);
+    // While there are elements in the array
+    while (counter > 0) {
+      // Pick a random index
+      let index = Math.floor(Math.random() * counter);
 
-// this function loops over the array of colors
-// it creates a new div and gives it a class with the value of the color
-// it also adds an event listener for a click for each card
-function createDivsForColors(colorArray) {
-  for (let color of colorArray) {
-    // create a new div
-    const newDiv = document.createElement('div');
+      // Decrease counter by 1
+      counter--;
 
-    // give it a class attribute for the value we are looping over
-    newDiv.classList.add(color);
+      // And swap the last element with it
+      let temp = array[counter];
+      array[counter] = array[index];
+      array[index] = temp;
+    }
 
-    // call a function handleCardClick when a div is clicked on
-    newDiv.addEventListener('click', handleCardClick);
-
-    // append the div to the element with an id of game
-    gameContainer.append(newDiv);
+    return array;
   }
-}
+
+  let shuffledColors = shuffle(COLORS);
+
+  // this function loops over the array of colors
+  // it creates a new div and gives it a class with the value of the color
+  // it also adds an event listener for a click for each card
+  function createDivsForColors(colorArray) {
+    for (let color of colorArray) {
+      // create a new div
+      const newDiv = document.createElement('div');
+      newDiv.style.borderRadius = '1rem';
+
+      // give it a class attribute for the value we are looping over
+      newDiv.classList.add(color);
+
+      // call a function handleCardClick when a div is clicked on
+      newDiv.addEventListener('click', handleCardClick);
+
+      // append the div to the element with an id of game
+      gameContainer.append(newDiv);
+    }
+  }
+
+  // when the DOM loads
+  createDivsForColors(shuffledColors);
+});
 
 // TODO: Implement this function!
 function handleCardClick(event) {
@@ -70,9 +104,14 @@ function handleCardClick(event) {
   if (event.target.classList.contains('flipped')) {
     return;
   }
+
+  score += 1;
+  curScore.innerText = `Score: ${score}`;
+
   // you can use event.target to see which element was clicked
   // console.log('you just clicked', event.target);
   let curCard = event.target;
+  // console.log(curCard.className);
   curCard.style.backgroundColor = curCard.className;
   // once a card is flipped, have it be inactive
 
@@ -84,8 +123,8 @@ function handleCardClick(event) {
     // have card two clicked
     cardTwo = cardOne === curCard ? null : curCard;
 
-    console.log(cardOne);
-    console.log(cardTwo);
+    // console.log(cardOne);
+    // console.log(cardTwo);
   }
 
   // lock two cards, after two are flipped
@@ -103,7 +142,7 @@ function handleCardClick(event) {
       //   alert('Good Game!');
       //   return;
       // }
-      console.log(matched);
+      // console.log(matched);
       // reset or move on to another two new cards
       cardOne = null;
       cardTwo = null;
@@ -125,13 +164,65 @@ function handleCardClick(event) {
         Cardslocked = false;
       }, 1000);
     }
+    // console.log(COLORS.length);
     // End Game when all of cards are paired
     if (matched === COLORS.length) {
-      alert('Good Game!');
-      return;
+      let goodGame = document.createElement('h1');
+
+      // get the current best score
+      let bestScore = localStorage.getItem('bestScore') || Infinity;
+      // console.log(bestScore);
+
+      // update best score
+      if (score < bestScore) {
+        localStorage.setItem('bestScore', score);
+        goodGame.innerText = `Congratulations! Your Score is ${score}, which is a New Best Score!`;
+      } else {
+        goodGame.innerText = `Good game! Your Score is: ${score}`;
+      }
+
+      resultHolder.append(goodGame);
+
+      // create the second button, restart
+      let restartBtn = document.createElement('button');
+      restartBtn.innerText = 'Restart';
+      restartBtn.classList.add('button');
+
+      // reset after clicking restart button
+      restartBtn.addEventListener('click', function () {
+        console.log(COLORS);
+        COLORS = [];
+        console.log(COLORS);
+        console.log(gameContainer);
+        gameContainer.innerHTML = '';
+        buttonHolder.innerHTML = '';
+        resultHolder.innerHTML = '';
+        document.querySelector('input[type=text]').value = '';
+        startBtnLocked = false;
+        score = 0;
+        matched = 0;
+
+        curBest.innerText = `Highest Score: ${localStorage.getItem(
+          'bestScore'
+        )}`;
+
+        curScore.innerText = `Score: ${score}`;
+      });
+
+      buttonHolder.append(restartBtn);
+
+      resultContainer.append(resultHolder);
+      resultContainer.append(buttonHolder);
     }
   }
 }
 
-// when the DOM loads
-createDivsForColors(shuffledColors);
+// set color on description
+let description = document.querySelector('#description');
+
+setInterval(function () {
+  let r = Math.floor(Math.random() * 255);
+  let b = Math.floor(Math.random() * 255);
+  let g = Math.floor(Math.random() * 255);
+  description.style.color = `rgb(${r}, ${g}, ${b})`;
+}, 1000);

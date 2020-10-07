@@ -5,3 +5,32 @@
   margin: 10px;
   display: inline-block;
 }
+
+h1 {
+  text-align: center;
+}
+
+.container {
+  text-align: center;
+}
+
+div .p-2 {
+  text-align: center;
+  padding: auto;
+  margin: auto;
+}
+
+div #description {
+  font-size: 1.5rem;
+  transition: color 1000ms;
+}
+
+.button {
+  border-radius: 0.5rem;
+  border: 1px solid blue;
+  color: black;
+}
+
+.button:hover {
+  background-color: greenyellow;
+}

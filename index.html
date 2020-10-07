@@ -4,11 +4,36 @@
     <meta charset="UTF-8" />
     <title>Memory Game!</title>
     <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    />
   </head>
   <body>
     <h1>Memory Game!</h1>
-    <div id="game">
+    <div class="container d-flex justify-content-around" id="start">
+      <div class="p-2" id="description">Challenge Your Memory</div>
+      <div class="p-2" id="highestScore"></div>
+      <div class="p-2" id="curScore"></div>
+      <div class="p-2">
+        <label>Pairs of Cards: </label>
+        <input type="text" placeholder="Greater Than Zero" />
+        <input
+          type="submit"
+          class="p-2 button"
+          id="startBtn"
+          value="Start Game"
+        />
+      </div>
     </div>
+    <div class="container" id="game"></div>
+    <div class="container" id="result">
+      <div id="resultHolder"></div>
+      <div id="buttonHolder"></div>
+    </div>
+
     <script src="script.js"></script>
   </body>
 </html>
