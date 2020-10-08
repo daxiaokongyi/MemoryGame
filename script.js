@@ -34,7 +34,7 @@ startDashBord.addEventListener('click', function (e) {
   startBtnLocked = true;
 
   // get number of cards user would like to play
-  pairCards = document.querySelector('input[type=text]').value;
+  pairCards = document.querySelector('input[type=number]').value;
 
   // set colors for each card randomly
   for (let i = 0; i < pairCards; i++) {
