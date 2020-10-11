@@ -38,6 +38,44 @@ startDashBord.addEventListener('click', function (e) {
   pairCards = document.querySelector('input[type=number]').value;
 
   // set colors for each card randomly
+  setColors(pairCards);
+
+  // here is a helper function to shuffle an array
+  // it returns the same array with values shuffled
+  // it is based on an algorithm called Fisher Yates if you want ot research more
+  let shuffledColors = shuffle(COLORS);
+
+  // this function loops over the array of colors
+  // it creates a new div and gives it a class with the value of the color
+  // it also adds an event listener for a click for each card
+
+  // when the DOM loads
+  createDivsForColors(shuffledColors);
+});
+
+const shuffle = (array) => {
+  // console.log('function shuffle()');
+  let counter = array.length;
+
+  // While there are elements in the array
+  while (counter > 0) {
+    // Pick a random index
+    let index = Math.floor(Math.random() * counter);
+
+    // Decrease counter by 1
+    counter--;
+
+    // And swap the last element with it
+    let temp = array[counter];
+    array[counter] = array[index];
+    array[index] = temp;
+  }
+
+  return array;
+};
+
+const setColors = (pairCards) => {
+  // console.log('function setColors()');
   for (let i = 0; i < pairCards; i++) {
     let r = Math.floor(Math.random() * 255);
     let g = Math.floor(Math.random() * 255);
@@ -46,55 +84,25 @@ startDashBord.addEventListener('click', function (e) {
     COLORS.push(curColor);
     COLORS.push(curColor);
   }
+};
 
-  // here is a helper function to shuffle an array
-  // it returns the same array with values shuffled
-  // it is based on an algorithm called Fisher Yates if you want ot research more
-  function shuffle(array) {
-    let counter = array.length;
+const createDivsForColors = (colorArray) => {
+  // console.log('create divs for colors');
+  for (let color of colorArray) {
+    // create a new div
+    const newDiv = document.createElement('div');
+    newDiv.style.borderRadius = '1rem';
 
-    // While there are elements in the array
-    while (counter > 0) {
-      // Pick a random index
-      let index = Math.floor(Math.random() * counter);
+    // give it a class attribute for the value we are looping over
+    newDiv.classList.add(color);
 
-      // Decrease counter by 1
-      counter--;
+    // call a function handleCardClick when a div is clicked on
+    newDiv.addEventListener('click', handleCardClick);
 
-      // And swap the last element with it
-      let temp = array[counter];
-      array[counter] = array[index];
-      array[index] = temp;
-    }
-
-    return array;
+    // append the div to the element with an id of game
+    gameContainer.append(newDiv);
   }
-
-  let shuffledColors = shuffle(COLORS);
-
-  // this function loops over the array of colors
-  // it creates a new div and gives it a class with the value of the color
-  // it also adds an event listener for a click for each card
-  function createDivsForColors(colorArray) {
-    for (let color of colorArray) {
-      // create a new div
-      const newDiv = document.createElement('div');
-      newDiv.style.borderRadius = '1rem';
-
-      // give it a class attribute for the value we are looping over
-      newDiv.classList.add(color);
-
-      // call a function handleCardClick when a div is clicked on
-      newDiv.addEventListener('click', handleCardClick);
-
-      // append the div to the element with an id of game
-      gameContainer.append(newDiv);
-    }
-  }
-
-  // when the DOM loads
-  createDivsForColors(shuffledColors);
-});
+};
 
 // TODO: Implement this function!
 function handleCardClick(event) {
